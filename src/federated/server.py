@@ -234,19 +234,18 @@ class FederatedServer:
             client_gradients.append(gradients)
         
         # Update stored gradients
-        self.client_gradients = []
+        new_client_gradients = [None] * self.num_clients
         for i in range(self.num_clients):
             if i in selected_indices:
                 idx = selected_indices.index(i)
-                self.client_gradients.append(client_gradients[idx])
+                new_client_gradients[i] = client_gradients[idx]
             else:
-                # Keep old gradients or compute new ones
-                if len(self.client_gradients) < i + 1:
-                    # Broadcast model to get gradient
-                    self.clients[i].set_model_parameters(
-                        copy.deepcopy(self.global_model.state_dict())
-                    )
-                    self.client_gradients.append(self.clients[i].compute_gradients())
+                # Broadcast model to get gradient
+                self.clients[i].set_model_parameters(
+                    copy.deepcopy(self.global_model.state_dict())
+                )
+                new_client_gradients[i] = self.clients[i].compute_gradients()
+        self.client_gradients = new_client_gradients
         
         # Aggregate updates
         self.aggregate_updates(selected_indices, client_updates)

@@ -65,7 +65,8 @@ def compute_auc(
         multi_class: Multi-class strategy ('ovr' or 'ovo')
         
     Returns:
-        AUC score
+        AUC score (returns 0.0 if computation fails due to single class in y_true
+        or other issues)
     """
     try:
         if len(y_prob.shape) == 1 or y_prob.shape[1] == 2:
@@ -76,7 +77,10 @@ def compute_auc(
         else:
             # Multi-class
             return roc_auc_score(y_true, y_prob, multi_class=multi_class)
-    except ValueError:
+    except ValueError as e:
+        # Common cases: only one class present in y_true, or y_prob has wrong shape
+        import warnings
+        warnings.warn(f"AUC computation failed: {str(e)}. Returning 0.0")
         return 0.0
 
 

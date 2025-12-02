@@ -68,8 +68,8 @@ def parse_args():
                         help='Client selection strategy')
     
     # Other parameters
-    parser.add_argument('--use_meta_learning', action='store_true', default=True,
-                        help='Use meta-learning enhancement')
+    parser.add_argument('--use_meta_learning', action='store_true',
+                        help='Use meta-learning enhancement (default: False)')
     parser.add_argument('--seed', type=int, default=42,
                         help='Random seed')
     parser.add_argument('--device', type=str, default='cpu',

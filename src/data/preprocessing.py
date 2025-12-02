@@ -272,7 +272,12 @@ def _dirichlet_split(
     
     for i, indices in enumerate(client_indices):
         if len(indices) == 0:
-            # Fallback: give some random samples
+            # Fallback: give some random samples when Dirichlet distribution fails
+            import warnings
+            warnings.warn(
+                f"Client {i} received no samples from Dirichlet distribution. "
+                f"Assigning random samples as fallback."
+            )
             indices = np.random.choice(n_samples, n_samples // num_clients, replace=False)
         
         X_client = X[indices]
